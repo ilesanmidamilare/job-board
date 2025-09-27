@@ -1,58 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-
-
-
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String 
-  type               String
-  provider           String
-  providerAccountId  String 
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+  id                String    @id @default(cuid())       // Unique user id
+  userId            String  
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade )
+
   @@unique([provider, providerAccountId])
 }
 
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String   
+  userId       String
   expires      DateTime
-  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  // @@map("sessions")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade )
 }
 
 model VerificationToken {
   identifier String
-  token      String @unique   
+  token      String   @unique
   expires    DateTime
- 
+
   @@unique([identifier, token])
-  // @@map("verification_tokens")
 }
 
 model User {
@@ -61,13 +39,15 @@ model User {
   email String? @unique
   emailVerified DateTime?
   image String?
+
   accounts Account[]
+
   sessions Session[]
+
   jobs Job[] @relation("PostedJobs")
 
   applications Application[]
 }
-
 
 model Job {
   id String   @id @default(cuid())
@@ -90,11 +70,10 @@ model Application {
   jobId String
   userId String
   status String @default("PENDING") // PENDING REVIEWING, ACCEPPTED, REJECTED
-  appliedAt DateTime @default(now())
+  applyAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id] )
   job Job @relation(fields: [jobId], references: [id])
 
   @@unique([jobId, userId])
 }
-

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 import React from 'react';
 import { Github } from 'lucide-react';
-import { login} from '@/lib/auth';
+import { login} from '../../../lib/auth';
 
 function Signin() {
   return (
