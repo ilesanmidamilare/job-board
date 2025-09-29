@@ -117,7 +117,7 @@ const PostJobPage = () => {
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Contract">Contract</option>
-              <option value="Intership">Intership</option>
+              <option value="Intership">Internship</option>
             </select>
           </div>
 
