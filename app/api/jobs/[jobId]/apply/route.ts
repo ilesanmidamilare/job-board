@@ -40,7 +40,7 @@ export async function POST(
             }
         })
 
-        return NextResponse.json(application)
+        return NextResponse.json(application, { status: 201 });
     } catch(error){
           console.error("Error creating job", error) 
           return new NextResponse("Internal server error", {status: 500})

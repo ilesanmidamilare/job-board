@@ -2,21 +2,31 @@ import { prisma } from '@/lib/prisma';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import React from 'react'
+import ApplyButton from './ApplyButton';
+import { notFound } from 'next/navigation';
 
 const JobPage = async({
-    params
+    params,
 }:{
     params: Promise<{id: string}>;
 }) => {
 
-    const jobId = (await params).id
+    // const jobId = (await params).id
+    // const job = await prisma.job.findUnique({
+    //     where:{id: jobId},
+    //     include:{postedBy: true},
+    // });
+
+    const { id: jobId } = await params;
     const job = await prisma.job.findUnique({
-        where:{id: jobId},
-        include:{postedBy: true},
+        where: { id: jobId },
+        include: { postedBy: true },
     });
 
+
     if(!job) {
-       console.log('not found')
+        notFound()
+        // console.log('not found')
     }
   return (
     <div className='max-w-4xl mx-auto'>
@@ -60,8 +70,8 @@ const JobPage = async({
             </div>
 
             <div className='mt-8 pt-8 border-t border-gray-200'>
-
-                <ApplyButton jobId ={job.id}/>
+                <ApplyButton jobId={job.id}/>
+                {/* <p>{job.id}</p> */}
             </div>
         </div>
     </div>
