@@ -3,6 +3,7 @@ import {auth} from "@/auth"
 import Link from "next/link"
 import { prisma } from '@/lib/prisma'
 import { redirect } from "next/navigation"
+import { formatDistanceToNow } from "date-fns"
 
 export default async function DashboardPage() {
     const session = await auth()
@@ -59,6 +60,7 @@ export default async function DashboardPage() {
                         <h2 className="text-xl font-semibold text-gray-900">Posted Jobs</h2>
                         <Link 
                             href="/jobs/post"
+                            className="text-indigo-600 hover:text-indigo-700  font-medium"
                         >
                             Post New Job
                         </Link>
@@ -66,26 +68,120 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-200">
-                        {/* { postedJobs.length === 0 ? (
+                        { postedJobs.length === 0 ? (
                             <p className="p-6 text-gray-500 text-center">
-                                You haven't posted any jobs yet
+                                You haven&rsquo;t posted any jobs yet
                             </p>
                         ) : (
                             postedJobs.map((job) => (
                                 <div key={job.id} className="p-6">
                                     <div className="flex justify-between items-start">
-
+                                        <div>
+                                            <h3 className="text-lg font-medium text-gray-900 mb-1">
+                                                {job.title}
+                                            </h3>
+                                            <p className="text-gray-600 mb-2">{job.company}</p>
+                                            <div className="flex items-center text-sm text-gray-500">
+                                                <span>{job.location}</span>
+                                                <span className="mx-2">.</span>
+                                                <span>{job.type}</span>
+                                                <span className="mx-2">.</span>
+                                                <span>
+                                                     {/* Applied{" "} */}
+                                                    {formatDistanceToNow(new Date(job.postedAt), {
+                                                        addSuffix: true
+                                                    })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="text-right">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-500">
+                                                {job._count.applications} applications
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Link 
+                                            href={`/jobs/${job.id}`}
+                                            className="text-indigo-500 hover:text-indigo-700 text-sm font-medium"
+                                        >
+                                                View Job
+                                        </Link>
                                     </div>
                                 </div>
                             ))
                         )
 
-                        } */}
+                        }
 
+                    </div>
+                </div>
+
+                {/* //left  column */}
+                <div className="text-xl font-semibold text-gray-900 mb-6">
+                    <h2>
+                        Your Applications
+                    </h2>
+
+                    <div className="bg-white rounded-lg shadow-sm divide-y divide-gray-200">
+                        {
+                            applications.length === 0 ? (
+                                <p className="p-6 text-gray-500 text-center">
+                                    You haven&rsquo;t posted any jobs yet
+                                </p>
+                            ): (
+                                applications.map((application) => (
+                                    <div key={application.id} className="p-6">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-lg font-medium text-gray-900 mb-1">
+                                                    {application.job.title}
+                                                </h3>
+                                                <p className="text-gray-600 mb-2">{application.job.company}</p>
+                                                <div className="flex items-center text-sm text-gray-500">
+                                                    <span>{application.job.location}</span>
+                                                    <span className="mx-2">.</span>
+                                                    <span>{application.job.type}</span>
+                                                    <span className="mx-2">.</span>
+                                                    <span>
+                                                        Applied{" "}
+                                                        {formatDistanceToNow(new Date(application.job.postedAt), {
+                                                            addSuffix: true
+                                                        })}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <span
+                                                className={`inline-flex items-center p-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                    application.status === "PENDING"
+                                                        ? "bg-yellow-100 text-yellow-800"
+                                                        : application.status === "ACCEPTED"
+                                                        ? "bg-green-100 text-green-800"
+                                                        : "bg-red-100 text-red-800"
+                                                }`}
+                                            >
+                                                {application.status}
+                                            </span>
+                                        </div>
+                                        <div className="mt-4 flex justify-end">
+                                            <Link 
+                                                href={`/jobs/${application.job.id}`}
+                                                className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                                            >
+                                                    View Job
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            )
+                        }
                     </div>
                 </div>
             </div>
 
+            
         </div>
     )
 }
